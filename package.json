@@ -1,0 +1,105 @@
+{
+  "name": "flowstudio",
+  "productName": "Isle Studio",
+  "version": "1.2.0",
+  "description": "Node-based AI workflow studio (image + video + agent) powered by APIMart",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "build": "vite build",
+    "start": "electron .",
+    "control": "node scripts/isle-control.cjs",
+    "verify:control": "node scripts/verify-control.cjs",
+    "test": "node --test tests/*.test.mjs",
+    "dist": "vite build && electron-builder --win",
+    "dist:nosign": "vite build && electron-builder --win -c.win.signAndEditExecutable=false",
+    "dist:mac": "vite build && electron-builder --mac",
+    "dist:mac:arm64": "vite build && electron-builder --mac --arm64",
+    "dist:mac:x64": "vite build && electron-builder --mac --x64",
+    "icon:icns": "node build/make-icns.cjs"
+  },
+  "author": "AZ DESIGN",
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@xyflow/react": "^12.3.5",
+    "lucide-react": "^1.63.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-photo-album": "^3.6.2",
+    "yet-another-react-lightbox": "^3.33.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "vite": "^5.4.11"
+  },
+  "build": {
+    "appId": "com.azdesign.islestudio",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.png"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false,
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "extraResources": [
+        {
+          "from": "build/bin/ffmpeg.exe",
+          "to": "bin/ffmpeg.exe"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.graphics-design",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64", "x64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["arm64", "x64"]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSHumanReadableCopyright": "AZ DESIGN"
+      }
+    },
+    "dmg": {
+      "title": "Isle Studio ${version}",
+      "icon": "build/icon.icns",
+      "contents": [
+        { "x": 140, "y": 200, "type": "file" },
+        { "x": 400, "y": 200, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "afterPack": "build/afterPack.cjs",
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Isle Studio",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
+    }
+  }
+}
